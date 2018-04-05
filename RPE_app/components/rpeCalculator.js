@@ -46,8 +46,7 @@ export default class RPECalculator extends Component {
         (text) => { 
           this.setState( {"max": parseInt(text)} );
           }
-      }
-      value = {this.state.max}/>
+      }/>
 
       <TextInput
       style={{height: 50, width: 120, color: "white", fontSize: 20, textAlign: "center"}}
@@ -57,8 +56,7 @@ export default class RPECalculator extends Component {
         (text) => { 
           this.setState( {"rpe": parseFloat(text)} );
           }
-      }
-      value = {this.state.rpe}/>
+      }/>
 
       <TextInput
       style={{height: 50, width: 120, color: "white", fontSize: 20, textAlign: "center"}}
@@ -68,14 +66,13 @@ export default class RPECalculator extends Component {
         (text) => { 
           this.setState( {"reps": parseInt(text)} );
         }
-      }
-      value = {this.state.reps}/> 
+      }/> 
 
       <Button color="red" onPress={() => {this.computeWorkingWeight()}} title="Compute working weight"/>
 
       <Text
-      style={{height: 50,  color: "white", fontSize: 20, textAlign: "center"}}
-      >{this.state.working_weight}</Text>
+      style={{height: 50,  color: "white", fontSize: 20, textAlign: "center"}}>
+      {this.state.working_weight.toString()}</Text>
     
     </View>
     );
