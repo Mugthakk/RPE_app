@@ -1,5 +1,5 @@
 import React, {Component} from "react";
-import {Text, View, Button, AppRegistry, ScrollView, TextInput} from "react-native";
+import {Text, View, Button, AppRegistry, TextInput, Alert} from "react-native";
 
 const RPE_reps_to_max = {
   10: {1: 1, 2: 0.96, 3: 0.92, 4: 0.89, 5: 0.86, 6: 0.84, 7: 0.81, 8: 0.79, 9: 0.76, 10: 0.74},
@@ -26,8 +26,12 @@ export default class RPECalculator extends Component {
   }
 
   computeWorkingWeight(){
-    console.log(this.state)
     this.setState({working_weight: Math.round(this.state.max * RPE_reps_to_max[this.state.rpe.toString()][this.state.reps.toString()])})
+    Alert.alert("Working weight:",
+                this.state.working_weight.toString(),
+                [{text: "OK", onPress: () => console.log("OK pressed")}],
+                {cancelable: false}
+    )
   }
 
   render(){
@@ -38,9 +42,10 @@ export default class RPECalculator extends Component {
       justifyContent: "space-around",
       alignItems: "center"}}>
       
+
+      <Text style={{color: "white", fontSize:15}}>1RM</Text>
       <TextInput
       style={{height: 50 , width: 120, color: "white", fontSize: 20, textAlign: "center"}}
-      placeholder="MAX"
       keyboardType="numeric"
       onChangeText={
         (text) => { 
@@ -48,9 +53,9 @@ export default class RPECalculator extends Component {
           }
       }/>
 
+      <Text style={{color: "white", fontSize:15}}>Target RPE</Text>
       <TextInput
       style={{height: 50, width: 120, color: "white", fontSize: 20, textAlign: "center"}}
-      placeholder="RPE"
       keyboardType="numeric"
       onChangeText={
         (text) => { 
@@ -58,9 +63,9 @@ export default class RPECalculator extends Component {
           }
       }/>
 
+      <Text style={{color: "white", fontSize:15}}># Reps</Text>
       <TextInput
       style={{height: 50, width: 120, color: "white", fontSize: 20, textAlign: "center"}}
-      placeholder="# Reps"
       keyboardType="numeric"
       onChangeText={
         (text) => { 
@@ -69,10 +74,6 @@ export default class RPECalculator extends Component {
       }/> 
 
       <Button color="red" onPress={() => {this.computeWorkingWeight()}} title="Compute working weight"/>
-
-      <Text
-      style={{height: 50,  color: "white", fontSize: 20, textAlign: "center"}}>
-      {this.state.working_weight.toString()}</Text>
     
     </View>
     );
