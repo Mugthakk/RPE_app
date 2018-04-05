@@ -5,6 +5,7 @@ import {View, Button} from "react-native";
 import MenuView from "../components/menuView"
 import RPECalculator from "../components/rpeCalculator";
 import RPEInfo from "../components/rpeInfo";
+import MaxEstimator from "../components/maxEstimator";
 
 
 
@@ -17,8 +18,11 @@ export const MenuStack = StackNavigator(
         header: null
       }
     },
-    Calculator: {
+    RPECalculator: {
       screen: RPECalculator,
+    },
+    MaxEstimator: {
+      screen: MaxEstimator
     },
     Info: {
       screen: RPEInfo
