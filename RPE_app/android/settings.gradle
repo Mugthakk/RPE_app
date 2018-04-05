@@ -1,0 +1,3 @@
+rootProject.name = 'RPE_app'
+
+include ':app'
