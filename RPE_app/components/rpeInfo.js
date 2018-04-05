@@ -17,4 +17,4 @@ export default class RPEInfo extends Component {
 
 }
 
-AppRegistry.registerComponent("RPE_app", () => rpeInfo);
+AppRegistry.registerComponent("RPE_app", () => RPEInfo);

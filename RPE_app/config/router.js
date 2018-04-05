@@ -3,7 +3,8 @@ import { StackNavigator, DrawerNavigator } from "react-navigation";
 import {View, Button} from "react-native";
 
 import MenuView from "../components/menuView"
-import RPEView from "../components/rpeView";
+import RPECalculator from "../components/rpeCalculator";
+import RPEInfo from "../components/rpeInfo";
 
 
 
@@ -17,10 +18,10 @@ export const MenuStack = StackNavigator(
       }
     },
     Calculator: {
-      screen: RPEView,
+      screen: RPECalculator,
     },
     Info: {
-      screen: RPEInfo 
+      screen: RPEInfo
     },
   },
   {
