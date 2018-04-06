@@ -1,5 +1,5 @@
 import React, {Component} from "react";
-import {Text, View, Button, AppRegistry, TextInput, Alert} from "react-native";
+import {Text, View, Button, AppRegistry, TextInput, Alert, Keyboard} from "react-native";
 
 const RPE_reps_to_max = {
   10: {1: 1, 2: 0.96, 3: 0.92, 4: 0.89, 5: 0.86, 6: 0.84, 7: 0.81, 8: 0.79, 9: 0.76, 10: 0.74},
@@ -26,12 +26,16 @@ export default class RPECalculator extends Component {
   }
 
   computeWorkingWeight(){
-    this.setState({working_weight: Math.round(this.state.max * RPE_reps_to_max[this.state.rpe.toString()][this.state.reps.toString()])})
-    Alert.alert("Working weight:",
-                this.state.working_weight.toString(),
-                [{text: "OK", onPress: () => console.log("OK pressed")}],
-                {cancelable: false}
-    )
+    if (this.state.max * this.state.rpe * this.state.reps == 0) return;
+    Keyboard.dismiss();
+    let percentage = RPE_reps_to_max[this.state.rpe.toString()][this.state.reps.toString()];
+    this.setState({working_weight: Math.round(this.state.max * percentage)}, 
+    () => {
+        Alert.alert("Working weight:",
+                    this.state.working_weight.toString(),
+                    [{text: "OK", onPress: () => console.log("OK pressed")}],
+                    {cancelable: false} )
+        });
   }
 
   render(){
@@ -49,9 +53,14 @@ export default class RPECalculator extends Component {
       keyboardType="numeric"
       onChangeText={
         (text) => { 
-          this.setState( {"max": parseInt(text)} );
+            if (!text) {
+              this.setState( {"max": 0} );
+            } else {
+              this.setState( {"max": parseInt(text)} );
+            }
           }
-      }/>
+      }
+      value={this.state.max.toString()}/>
 
       <Text style={{color: "white", fontSize:15}}>Target RPE</Text>
       <TextInput
@@ -59,9 +68,14 @@ export default class RPECalculator extends Component {
       keyboardType="numeric"
       onChangeText={
         (text) => { 
-          this.setState( {"rpe": parseFloat(text)} );
+            if (!text) {
+              this.setState( {"rpe": 0 } )
+            } else {
+            this.setState( {"rpe": parseFloat(text)} );
+            }
           }
-      }/>
+      }
+      value={this.state.rpe.toString()}/>
 
       <Text style={{color: "white", fontSize:15}}># Reps</Text>
       <TextInput
@@ -69,9 +83,14 @@ export default class RPECalculator extends Component {
       keyboardType="numeric"
       onChangeText={
         (text) => { 
-          this.setState( {"reps": parseInt(text)} );
+          if (!text){
+            this.setState( {"reps": 0 } );
+          } else {
+            this.setState( {"reps": parseInt(text)} );
+          }
         }
-      }/> 
+      }
+      value={this.state.reps.toString()}/> 
 
       <Button color="red" onPress={() => {this.computeWorkingWeight()}} title="Compute working weight"/>
     

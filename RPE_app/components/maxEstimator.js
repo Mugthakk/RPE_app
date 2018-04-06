@@ -1,5 +1,5 @@
 import React, {Component} from "react";
-import {Text, View, Button, AppRegistry, TextInput, Alert} from "react-native";
+import {Text, View, Button, AppRegistry, TextInput, Alert, Keyboard} from "react-native";
 
 const RPE_reps_to_max = {
   10: {1: 1, 2: 0.96, 3: 0.92, 4: 0.89, 5: 0.86, 6: 0.84, 7: 0.81, 8: 0.79, 9: 0.76, 10: 0.74},
@@ -26,15 +26,16 @@ export default class MaxEstimator extends Component {
   }
 
   computeEstimatedMax(){
+    if (this.state.working_weight * this.state.rpe * this.state.reps == 0) return;
+    Keyboard.dismiss();
     let percentage = RPE_reps_to_max[this.state.rpe.toString()][this.state.reps.toString()];
-    console.log(percentage)
-    console.log(this.state)
-    this.setState({max: Math.round(this.state.working_weight / percentage) });
-    Alert.alert("Estimated max:",
-                this.state.max.toString(),
-                [{text: "OK", onPress: () => console.log("OK pressed")}],
-                {cancelable: false}
-    )
+    this.setState({max: Math.round(this.state.working_weight / percentage)} , () => {  
+      Alert.alert("Estimated max:",
+        this.state.max.toString(),
+        [{text: "OK", onPress: () => console.log("OK pressed")}],
+        {cancelable: false}
+        ) 
+      });
   }
 
   render(){
@@ -52,19 +53,29 @@ export default class MaxEstimator extends Component {
       keyboardType="numeric"
       onChangeText={
         (text) => { 
-          this.setState( {"working_weight": parseInt(text)} );
+            if (!text) {
+              this.setState( {"working_weight": 0} );
+            } else {
+              this.setState( {"working_weight": parseInt(text)} );
+            }
           }
-      }/>
+      }
+      value={this.state.working_weight.toString()}/>
 
       <Text style={{color: "white", fontSize:15}}># Reps</Text>
       <TextInput
       style={{height: 50, width: 120, color: "white", fontSize: 20, textAlign: "center"}}
       keyboardType="numeric"
       onChangeText={
-        (text) => { 
-          this.setState( {"reps": parseInt(text)} );
+        (text) => {
+          if (!text) {
+              this.setState( {"reps": 0} );
+          } else {          
+            this.setState( {"reps": parseInt(text)} );
+          }
         }
-      }/> 
+      }
+      value = {this.state.reps.toString()}/> 
 
       <Text style={{color: "white", fontSize:15}}>RPE</Text>
       <TextInput
@@ -72,9 +83,14 @@ export default class MaxEstimator extends Component {
       keyboardType="numeric"
       onChangeText={
         (text) => { 
-          this.setState( {"rpe": parseFloat(text)} );
+            if (!text){
+              this.setState( {"rpe": 0} );
+            } else {
+              this.setState( {"rpe": parseFloat(text)} );
+            }
           }
-      }/>
+      }
+      value={this.state.rpe.toString()}/>
 
       
 
