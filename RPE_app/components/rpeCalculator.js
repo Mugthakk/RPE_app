@@ -25,6 +25,19 @@ export default class RPECalculator extends Component {
     };
   }
 
+  computeEstimatedMax(){
+    if (this.state.working_weight * this.state.rpe * this.state.reps == 0) return;
+    Keyboard.dismiss();
+    let percentage = RPE_reps_to_max[this.state.rpe.toString()][this.state.reps.toString()];
+    this.setState({max: Math.round(this.state.working_weight / percentage)} , () => {  
+      Alert.alert("Estimated max:",
+        this.state.max.toString(),
+        [{text: "OK", onPress: () => console.log("OK pressed")}],
+        {cancelable: false}
+        ) 
+      });
+  }
+
   computeWorkingWeight(){
     if (this.state.max * this.state.rpe * this.state.reps == 0) return;
     Keyboard.dismiss();
@@ -46,54 +59,87 @@ export default class RPECalculator extends Component {
       justifyContent: "space-around",
       alignItems: "center"}}>
       
+      <View style={{flex: 1, flexDirection: "row", backgroundColor: "grey", justifyContent: "space-around", alignItems: "center"}}>
 
-      <Text style={{color: "white", fontSize:15}}>1RM</Text>
-      <TextInput
-      style={{height: 50 , width: 120, color: "white", fontSize: 20, textAlign: "center"}}
-      keyboardType="numeric"
-      onChangeText={
-        (text) => { 
-            if (!text) {
-              this.setState( {"max": 0} );
-            } else {
-              this.setState( {"max": parseInt(text)} );
+        <View style={{flex: 1, flexDirection: "column", backgroundColor: "grey", justifyContent: "space-around", alignItems: "center"}}>
+          <Text style={{color: "black", fontSize:15}}>1RM</Text>
+          <TextInput
+          style={{height: 50 , width: 120, color: "white", fontSize: 20, textAlign: "center"}}
+          keyboardType="numeric"
+          onChangeText={
+            (text) => { 
+                if (!text) {
+                  this.setState( {"max": 0} );
+                } else {
+                  this.setState( {"max": parseInt(text)} );
+                }
+              }
+          }
+          value={this.state.max.toString()}/>
+        </View>
+
+        <View style={{flex: 1, flexDirection: "column", backgroundColor: "grey", justifyContent: "space-around", alignItems: "center"}}>
+            <Text style={{color: "black", fontSize:15}}>Working weight</Text>
+            <TextInput
+            style={{height: 50 , width: 120, color: "white", fontSize: 20, textAlign: "center"}}
+            keyboardType="numeric"
+            onChangeText={
+              (text) => { 
+                  if (!text) {
+                    this.setState( {"working_weight": 0} );
+                  } else {
+                    this.setState( {"working_weight": parseInt(text)} );
+                  }
+                }
+            }
+            value={this.state.working_weight.toString()}/>
+        </View>
+
+
+      </View>
+      
+      <View style={{flex: 1, flexDirection: "row", backgroundColor: "grey", justifyContent: "space-around", alignItems: "center"}}>
+
+        <View style={{flex: 1, flexDirection: "column", backgroundColor: "grey", justifyContent: "space-around", alignItems: "center"}}>
+          <Text style={{color: "black", fontSize:15}}>Target RPE</Text>
+          <TextInput
+          style={{height: 50, width: 120, color: "white", fontSize: 20, textAlign: "center"}}
+          keyboardType="numeric"
+          onChangeText={
+            (text) => { 
+                if (!text) {
+                  this.setState( {"rpe": 0 } )
+                } else {
+                this.setState( {"rpe": parseFloat(text)} );
+                }
+              }
+          }
+          value={this.state.rpe.toString()}/>
+        </View>
+
+        <View style={{flex: 1, flexDirection: "column", backgroundColor: "grey", justifyContent: "space-around", alignItems: "center"}}>
+          <Text style={{color: "black", fontSize:15}}># Reps</Text>
+          <TextInput
+          style={{height: 50, width: 120, color: "white", fontSize: 20, textAlign: "center"}}
+          keyboardType="numeric"
+          onChangeText={
+            (text) => { 
+              if (!text){
+                this.setState( {"reps": 0 } );
+              } else {
+                this.setState( {"reps": parseInt(text)} );
+              }
             }
           }
-      }
-      value={this.state.max.toString()}/>
+          value={this.state.reps.toString()}/> 
+        </View>
+        
+      </View>
 
-      <Text style={{color: "white", fontSize:15}}>Target RPE</Text>
-      <TextInput
-      style={{height: 50, width: 120, color: "white", fontSize: 20, textAlign: "center"}}
-      keyboardType="numeric"
-      onChangeText={
-        (text) => { 
-            if (!text) {
-              this.setState( {"rpe": 0 } )
-            } else {
-            this.setState( {"rpe": parseFloat(text)} );
-            }
-          }
-      }
-      value={this.state.rpe.toString()}/>
-
-      <Text style={{color: "white", fontSize:15}}># Reps</Text>
-      <TextInput
-      style={{height: 50, width: 120, color: "white", fontSize: 20, textAlign: "center"}}
-      keyboardType="numeric"
-      onChangeText={
-        (text) => { 
-          if (!text){
-            this.setState( {"reps": 0 } );
-          } else {
-            this.setState( {"reps": parseInt(text)} );
-          }
-        }
-      }
-      value={this.state.reps.toString()}/> 
-
-      <Button color="red" onPress={() => {this.computeWorkingWeight()}} title="Compute working weight"/>
-    
+      <View style={{flex: 1, flexDirection: "column", backgroundColor: "grey", justifyContent: "space-around", alignItems: "center"}}>
+          <Button color="red" onPress={() => {this.computeWorkingWeight()}} title="Compute working weight"/>
+          <Button color="red" onPress={() => {this.computeEstimatedMax()}} title="Compute estimated 1RM"/>
+      </View>  
     </View>
     );
   }
