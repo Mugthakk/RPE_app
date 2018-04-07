@@ -19,8 +19,8 @@ export default class RPECalculator extends Component {
     super(props);
     this.state = { 
       max: 0,
-      rpe: 0.0,
-      reps: 0,
+      rpe: 6.0,
+      reps: 1,
       working_weight: 0
     };
   }
@@ -98,40 +98,82 @@ export default class RPECalculator extends Component {
 
       </View>
       
-      <View style={{flex: 1, flexDirection: "row", backgroundColor: "grey", justifyContent: "space-around", alignItems: "center"}}>
+      <View style={{flex: 1, flexDirection: "column", backgroundColor: "grey", justifyContent: "space-around", alignItems: "center"}}>
 
         <View style={{flex: 1, flexDirection: "column", backgroundColor: "grey", justifyContent: "space-around", alignItems: "center"}}>
+          
           <Text style={{color: "black", fontSize:15}}>Target RPE</Text>
-          <TextInput
-          style={{height: 50, width: 120, color: "white", fontSize: 20, textAlign: "center"}}
-          keyboardType="numeric"
-          onChangeText={
-            (text) => { 
-                if (!text) {
-                  this.setState( {"rpe": 0 } )
-                } else {
-                this.setState( {"rpe": parseFloat(text)} );
-                }
+
+          <View style={{flex: 1, flexDirection: "row", backgroundColor: "grey", justifyContent: "space-around", alignItems: "center"}}>
+            
+            <Button title=" - " color="red" onPress={ () => { 
+              if (this.state.rpe <= 6 || this.state.rpe > 10) return;
+              else {
+                this.setState( {"rpe": this.state.rpe - 0.5 } );
               }
-          }
-          value={this.state.rpe.toString()}/>
+             } }/>  
+
+            <TextInput
+            style={{height: 50, width: 60, color: "white", fontSize: 20, textAlign: "center"}}
+            keyboardType="numeric"
+            onChangeText={
+              (text) => { 
+                  if (!text) {
+                    this.setState( {"rpe": 0 } )
+                  } else {
+                  this.setState( {"rpe": parseFloat(text)} );
+                  }
+                }
+            }
+            value={this.state.rpe.toString()}/>
+
+             <Button title=" + " color="red" onPress={ () => { 
+              if (this.state.rpe < 6 || this.state.rpe >= 10) return;
+              else {
+                this.setState( {"rpe": this.state.rpe + 0.5 } );
+              }
+             } }/> 
+          
+          </View>
+
         </View>
 
         <View style={{flex: 1, flexDirection: "column", backgroundColor: "grey", justifyContent: "space-around", alignItems: "center"}}>
+          
           <Text style={{color: "black", fontSize:15}}># Reps</Text>
-          <TextInput
-          style={{height: 50, width: 120, color: "white", fontSize: 20, textAlign: "center"}}
-          keyboardType="numeric"
-          onChangeText={
-            (text) => { 
-              if (!text){
-                this.setState( {"reps": 0 } );
-              } else {
-                this.setState( {"reps": parseInt(text)} );
+          
+          <View style={{flex: 1, flexDirection: "row", backgroundColor: "grey", justifyContent: "space-around", alignItems: "center"}}>
+            
+          <Button title=" - " color="red" onPress={ () => { 
+              if (this.state.reps <= 1 || this.state.reps > 10) return;
+              else {
+                this.setState( {"reps": this.state.reps - 1 } );
+              }
+             } }/>
+
+            <TextInput
+            style={{height: 50, width: 60, color: "white", fontSize: 20, textAlign: "center"}}
+            keyboardType="numeric"
+            onChangeText={
+              (text) => { 
+                if (!text){
+                  this.setState( {"reps": 0 } );
+                } else {
+                  this.setState( {"reps": parseInt(text)} );
+                }
               }
             }
-          }
-          value={this.state.reps.toString()}/> 
+            value={this.state.reps.toString()}/> 
+
+            <Button title=" + " color="red" onPress={ () => { 
+              if (this.state.reps < 1 || this.state.reps >= 10) return;
+              else {
+                this.setState( {"reps": this.state.reps + 1 } );
+              }
+             } }/>
+
+            </View>
+
         </View>
         
       </View>
