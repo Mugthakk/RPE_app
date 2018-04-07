@@ -26,7 +26,24 @@ export default class RPECalculator extends Component {
   }
 
   computeEstimatedMax(){
-    if (this.state.working_weight * this.state.rpe * this.state.reps == 0) return;
+    if (this.state.working_weight * this.state.rpe * this.state.reps == 0) {
+      Alert.alert("Invalid inputs",
+        "Working weight, RPE and #Reps must all be non-zero",
+        [{text: "OK", onPress: () => console.log("OK pressed")}],
+        {cancelable: false}
+        ); 
+        Keyboard.dismiss();
+        return;
+    }
+    if (this.state.rpe < 6 || this.state.rpe > 10 || this.state.reps > 10) {
+      Alert.alert("Invalid reps or RPE",
+      "RPE must be 6 to 10 and #reps 1 to 10",
+      [{text: "OK", onPress: () => console.log("OK pressed")}],
+      {cancelable: false}
+      ); 
+      Keyboard.dismiss();
+      return;
+    }
     Keyboard.dismiss();
     let percentage = RPE_reps_to_max[this.state.rpe.toString()][this.state.reps.toString()];
     this.setState({max: Math.round(this.state.working_weight / percentage)} , () => {  
@@ -39,7 +56,24 @@ export default class RPECalculator extends Component {
   }
 
   computeWorkingWeight(){
-    if (this.state.max * this.state.rpe * this.state.reps == 0) return;
+    if (this.state.max * this.state.rpe * this.state.reps == 0) {
+      Alert.alert("Invalid inputs",
+        "Working weight, RPE and #reps must all be non-zero",
+        [{text: "OK", onPress: () => console.log("OK pressed")}],
+        {cancelable: false}
+        ); 
+        Keyboard.dismiss();
+        return;
+    }
+    if (this.state.rpe < 6 || this.state.rpe > 10 || this.state.reps > 10) {
+      Alert.alert("Invalid reps or RPE",
+      "RPE must be 6 to 10 and #reps 1 to 10",
+      [{text: "OK", onPress: () => console.log("OK pressed")}],
+      {cancelable: false}
+      ); 
+      Keyboard.dismiss();
+      return;
+    }
     Keyboard.dismiss();
     let percentage = RPE_reps_to_max[this.state.rpe.toString()][this.state.reps.toString()];
     this.setState({working_weight: Math.round(this.state.max * percentage)}, 
