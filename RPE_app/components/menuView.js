@@ -10,8 +10,7 @@ export default class MenuView extends Component {
       backgroundColor: "grey",
       justifyContent: "space-around",
       alignItems: "center"}}>
-      <Button color="red" onPress={() => this.props.navigation.navigate("RPECalculator")} title="Work-weight calculator"/>
-      <Button color="red" onPress={() => this.props.navigation.navigate("MaxEstimator")} title="1RM Estimator"/>
+      <Button color="red" onPress={() => this.props.navigation.navigate("RPECalculator")} title="RPE calculator"/>
       <Button color="red" onPress={() => this.props.navigation.navigate("Info")} title="RPE information"/>
     </View>
     );
