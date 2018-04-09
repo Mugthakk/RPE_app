@@ -1,5 +1,5 @@
 import React, {Component} from "react";
-import {Text, View, Button, AppRegistry, TextInput, Alert, Keyboard} from "react-native";
+import {AppState, AsyncStorage, Text, View, Button, AppRegistry, TextInput, Alert, Keyboard} from "react-native";
 
 const RPE_reps_to_max = {
   10: {1: 1, 2: 0.96, 3: 0.92, 4: 0.89, 5: 0.86, 6: 0.84, 7: 0.81, 8: 0.79, 9: 0.76, 10: 0.74},
@@ -15,14 +15,61 @@ const RPE_reps_to_max = {
 
 export default class RPECalculator extends Component {
 
+  componentWillMount(){
+    AppState.addEventListener("change", this._handleAppStateChange);    
+  }
+
+  componentWillUnmount(){
+    AppState.removeEventListener("change", this._handleAppStateChange);
+  }
+
   constructor(props){
     super(props);
-    this.state = { 
-      max: 0,
-      rpe: 6.0,
-      reps: 1,
-      working_weight: 0
-    };
+    this.state= {max: 0, rpe: 6.0, reps: 1, working_weight: 0};
+  }
+
+  _handleAppStateChange = async (nextAppState) => {
+
+    if (nextAppState == null){
+      return;
+    }
+
+    if (this.state.appState.match(/inactive|background/) && nextAppState === 'active') {
+      this._loadStateOrDefault();
+    } else if (this.state.appState.match(/active/) && nextAppState !== 'active' ){
+      this._trySaveState();
+    }
+    
+  }
+
+  async _trySaveState(){
+
+    try {
+      await AsyncStorage.setItem('@StateStorage:calculatorState', [
+        this.state.max != null ? this.state.max : 0,
+        this.state.rpe != null ? this.state.rpe : 6.0,
+        this.state.reps != null ? this.state.reps : 1,
+        this.state.working_weight != null ? this.state.working_weight : 0]
+      );
+    } catch (error) {
+      return;
+    }
+  } 
+
+  async _loadStateOrDefault(){
+    try {
+      const savedState = await AsyncStorage.getItem('@MySuperStore:calculatorState');
+      if (savedState != null){
+        this.setState( {
+          max: savedState.max != null ? savedState.max : 0,
+          rpe: savedState.rpe != null ? savedState.rpe : 6.0,
+          reps: savedState.reps != null ? savedState.reps : 1,
+          working_weight: savedState.working_weight != null ? savedState.working_weight : 0
+        } );
+      }
+    } catch (error) {
+      this.setState( {max: 0, rpe: 6.0, reps: 1, working_weight: 0} ); 
+    }
   }
 
   computeEstimatedMax(){
