@@ -1,5 +1,5 @@
 import React, {Component} from "react";
-import {Text, View, Button, AppRegistry, ScrollView} from "react-native";
+import {Text, View, Button, AppRegistry, ScrollView,  AsyncStorage} from "react-native";
 
 export default class MenuView extends Component {
 

@@ -20,12 +20,17 @@ export default class RPECalculator extends Component {
   }
 
   componentWillUnmount(){
+    this._trySaveState();
     AppState.removeEventListener("change", this._handleAppStateChange);
+  }
+
+  componentDidMount(){
+    this._loadStateOrDefault();
   }
 
   constructor(props){
     super(props);
-    this.state= {max: 0, rpe: 6.0, reps: 1, working_weight: 0};
+    this.state = {max: 2, rpe: 6.0, reps: 1, working_weight: 0};
   }
 
   _handleAppStateChange = async (nextAppState) => {
@@ -34,23 +39,21 @@ export default class RPECalculator extends Component {
       return;
     }
 
-    if (this.state.appState.match(/inactive|background/) && nextAppState === 'active') {
+    if (nextAppState === 'active') {
       this._loadStateOrDefault();
-    } else if (this.state.appState.match(/active/) && nextAppState !== 'active' ){
+    } else if (nextAppState !== 'active'){
       this._trySaveState();
     }
     
   }
 
   async _trySaveState(){
-
     try {
-      await AsyncStorage.setItem('@StateStorage:calculatorState', [
-        this.state.max != null ? this.state.max : 0,
-        this.state.rpe != null ? this.state.rpe : 6.0,
-        this.state.reps != null ? this.state.reps : 1,
-        this.state.working_weight != null ? this.state.working_weight : 0]
-      );
+      console.log(this.state);
+      await AsyncStorage.setItem('max', String(this.state.max != null ? this.state.max : 0));
+      await AsyncStorage.setItem('rpe', String(this.state.rpe != null ? this.state.rpe : 6.0));
+      await AsyncStorage.setItem("reps", String(this.state.reps != null ? this.state.reps : 1));
+      await AsyncStorage.setItem("working_weight", String(this.state.working_weight != null ? this.state.working_weight : 0));
     } catch (error) {
       return;
     }
@@ -58,18 +61,30 @@ export default class RPECalculator extends Component {
 
   async _loadStateOrDefault(){
     try {
-      const savedState = await AsyncStorage.getItem('@MySuperStore:calculatorState');
-      if (savedState != null){
-        this.setState( {
-          max: savedState.max != null ? savedState.max : 0,
-          rpe: savedState.rpe != null ? savedState.rpe : 6.0,
-          reps: savedState.reps != null ? savedState.reps : 1,
-          working_weight: savedState.working_weight != null ? savedState.working_weight : 0
-        } );
-      }
+      let max = await AsyncStorage.getItem("max");
+      let rpe = await AsyncStorage.getItem("rpe");
+      let reps = await AsyncStorage.getItem("reps");
+      let working_weight = await AsyncStorage.getItem("working_weight").then((working_weight) => {
+        let savedState = {
+          max: Number(max != null ? max : 0),
+          rpe: Number(rpe != null ? rpe : 6.0),
+          reps: Number(reps != null ? reps : 1),
+          working_weight: Number(working_weight != null ? working_weight : 0)
+        }
+        console.log(savedState);
+        if (savedState != null){
+          this.setState( {
+            max: savedState.max != null ? savedState.max : 0,
+            rpe: savedState.rpe != null ? savedState.rpe : 6.0,
+            reps: savedState.reps != null ? savedState.reps : 1,
+            working_weight: savedState.working_weight != null ? savedState.working_weight : 0
+          } );
+        }
+      });
     } catch (error) {
       this.setState( {max: 0, rpe: 6.0, reps: 1, working_weight: 0} ); 
     }
+    
   }
 
   computeEstimatedMax(){
