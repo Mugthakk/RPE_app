@@ -15,7 +15,7 @@ export const MenuStack = StackNavigator(
       screen: MenuView,
       navigationOptions: {
         header: null
-      }
+      } 
     },
     RPECalculator: {
       screen: RPECalculator,
