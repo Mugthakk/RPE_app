@@ -1,6 +1,5 @@
-import React, { Component } from "react";
-import { StackNavigator, DrawerNavigator } from "react-navigation";
-import {View, Button} from "react-native";
+import React from "react";
+import { StackNavigator } from "react-navigation";
 
 import MenuView from "../components/menuView"
 import RPECalculator from "../components/rpeCalculator";

@@ -1,7 +1,7 @@
-import React, {Component} from "react";
+import React from "react";
 import {Text, View, Button, AppRegistry, ScrollView, Modal, Image, TouchableWithoutFeedback} from "react-native";
 
-export default class RPEInfo extends Component {
+export default class RPEInfo extends React.Component {
 
 
   constructor(props){

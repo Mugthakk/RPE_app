@@ -1,7 +1,7 @@
-import React, {Component} from "react";
-import {Text, View, Button, AppRegistry, ScrollView,  AsyncStorage} from "react-native";
+import React from "react";
+import {View, Button, AppRegistry} from "react-native";
 
-export default class MenuView extends Component {
+class MenuView extends React.Component {
 
   render(){
     return(
@@ -17,5 +17,7 @@ export default class MenuView extends Component {
   }
 
 }
+
+export default MenuView
 
 AppRegistry.registerComponent("RPE_app", () => MenuView);

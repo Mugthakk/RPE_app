@@ -1,5 +1,7 @@
-import React, {Component} from "react";
+import React from "react";
 import {AppState, AsyncStorage, Text, View, Button, AppRegistry, TextInput, Alert, Keyboard} from "react-native";
+import InputField from './InputField';
+import ButtonInputField from './ButtonInputField';
 
 const RPE_reps_to_max = {
   10: {1: 1, 2: 0.96, 3: 0.92, 4: 0.89, 5: 0.86, 6: 0.84, 7: 0.81, 8: 0.79, 9: 0.76, 10: 0.74},
@@ -13,7 +15,12 @@ const RPE_reps_to_max = {
   6: {1: 0.87, 2: 0.84, 3: 0.80, 4: 0.79, 5: 0.76, 6: 0.74, 7: 0.70, 8: 0.67, 9: 0.66, 10: 0.63}
 }
 
-export default class RPECalculator extends Component {
+export default class RPECalculator extends React.Component {
+
+  constructor(props){
+    super(props);
+    this.state = {max: 2, rpe: 6.0, reps: 1, working_weight: 0};
+  }
 
   componentWillMount(){
     AppState.addEventListener("change", this._handleAppStateChange);    
@@ -26,11 +33,6 @@ export default class RPECalculator extends Component {
 
   componentDidMount(){
     this._loadStateOrDefault();
-  }
-
-  constructor(props){
-    super(props);
-    this.state = {max: 2, rpe: 6.0, reps: 1, working_weight: 0};
   }
 
   _handleAppStateChange = async (nextAppState) => {
@@ -49,7 +51,6 @@ export default class RPECalculator extends Component {
 
   async _trySaveState(){
     try {
-      console.log(this.state);
       await AsyncStorage.setItem('max', String(this.state.max != null ? this.state.max : 0));
       await AsyncStorage.setItem('rpe', String(this.state.rpe != null ? this.state.rpe : 6.0));
       await AsyncStorage.setItem("reps", String(this.state.reps != null ? this.state.reps : 1));
@@ -71,7 +72,6 @@ export default class RPECalculator extends Component {
           reps: Number(reps != null ? reps : 1),
           working_weight: Number(working_weight != null ? working_weight : 0)
         }
-        console.log(savedState);
         if (savedState != null){
           this.setState( {
             max: savedState.max != null ? savedState.max : 0,
@@ -157,120 +157,44 @@ export default class RPECalculator extends Component {
       
       <View style={{flex: 1, flexDirection: "row", backgroundColor: "grey", justifyContent: "space-around", alignItems: "center"}}>
 
-        <View style={{flex: 1, flexDirection: "column", backgroundColor: "grey", justifyContent: "space-around", alignItems: "center"}}>
-          <Text style={{color: "black", fontSize:15}}>1RM</Text>
-          <TextInput
-          style={{height: 50 , width: 120, color: "white", fontSize: 20, textAlign: "center"}}
-          keyboardType="numeric"
-          onChangeText={
-            (text) => { 
-                if (!text) {
-                  this.setState( {"max": 0} );
-                } else {
-                  this.setState( {"max": parseInt(text)} );
-                }
-              }
-          }
-          value={this.state.max.toString()}/>
-        </View>
 
-        <View style={{flex: 1, flexDirection: "column", backgroundColor: "grey", justifyContent: "space-around", alignItems: "center"}}>
-            <Text style={{color: "black", fontSize:15}}>Working weight</Text>
-            <TextInput
-            style={{height: 50 , width: 120, color: "white", fontSize: 20, textAlign: "center"}}
-            keyboardType="numeric"
-            onChangeText={
-              (text) => { 
-                  if (!text) {
-                    this.setState( {"working_weight": 0} );
-                  } else {
-                    this.setState( {"working_weight": parseInt(text)} );
-                  }
-                }
-            }
-            value={this.state.working_weight.toString()}/>
-        </View>
+        <InputField 
+          heading={"1RM"}
+          fieldValue={this.state.max}
+          stateUpdate={(newValue) => this.setState({"max": newValue})}
+          defaultValue={0}
+        />
 
+        <InputField 
+          heading={"Working weight"}
+          fieldValue={this.state.working_weight}
+          stateUpdate={(newValue) => this.setState({"working_weight": newValue})}
+          defaultValue={0}
+        />
 
       </View>
       
       <View style={{flex: 1, flexDirection: "column", backgroundColor: "grey", justifyContent: "space-around", alignItems: "center"}}>
 
-        <View style={{flex: 1, flexDirection: "column", backgroundColor: "grey", justifyContent: "space-around", alignItems: "center"}}>
-          
-          <Text style={{color: "black", fontSize:15}}>Target RPE</Text>
+        <ButtonInputField
+          heading={"Target RPE"}
+          fieldValue={this.state.rpe}
+          stateUpdate={(newValue) => this.setState({"rpe": newValue})}
+          defaultValue={0}
+          lowerFieldValueBound={6}
+          upperFieldValueBound={10}
+          increment={0.5}
+        />
 
-          <View style={{flex: 1, flexDirection: "row", backgroundColor: "grey", justifyContent: "space-around", alignItems: "center"}}>
-            
-            <Button title=" - " color="red" onPress={ () => { 
-              if (this.state.rpe <= 6 || this.state.rpe > 10) return;
-              else {
-                this.setState( {"rpe": this.state.rpe - 0.5 } );
-              }
-             } }/>  
-
-            <TextInput
-            style={{height: 50, width: 60, color: "white", fontSize: 20, textAlign: "center"}}
-            keyboardType="numeric"
-            onChangeText={
-              (text) => { 
-                  if (!text) {
-                    this.setState( {"rpe": 0 } )
-                  } else {
-                  this.setState( {"rpe": parseFloat(text)} );
-                  }
-                }
-            }
-            value={this.state.rpe.toString()}/>
-
-             <Button title=" + " color="red" onPress={ () => { 
-              if (this.state.rpe < 6 || this.state.rpe >= 10) return;
-              else {
-                this.setState( {"rpe": this.state.rpe + 0.5 } );
-              }
-             } }/> 
-          
-          </View>
-
-        </View>
-
-        <View style={{flex: 1, flexDirection: "column", backgroundColor: "grey", justifyContent: "space-around", alignItems: "center"}}>
-          
-          <Text style={{color: "black", fontSize:15}}># Reps</Text>
-          
-          <View style={{flex: 1, flexDirection: "row", backgroundColor: "grey", justifyContent: "space-around", alignItems: "center"}}>
-            
-          <Button title=" - " color="red" onPress={ () => { 
-              if (this.state.reps <= 1 || this.state.reps > 10) return;
-              else {
-                this.setState( {"reps": this.state.reps - 1 } );
-              }
-             } }/>
-
-            <TextInput
-            style={{height: 50, width: 60, color: "white", fontSize: 20, textAlign: "center"}}
-            keyboardType="numeric"
-            onChangeText={
-              (text) => { 
-                if (!text){
-                  this.setState( {"reps": 0 } );
-                } else {
-                  this.setState( {"reps": parseInt(text)} );
-                }
-              }
-            }
-            value={this.state.reps.toString()}/> 
-
-            <Button title=" + " color="red" onPress={ () => { 
-              if (this.state.reps < 1 || this.state.reps >= 10) return;
-              else {
-                this.setState( {"reps": this.state.reps + 1 } );
-              }
-             } }/>
-
-            </View>
-
-        </View>
+        <ButtonInputField
+          heading={"# Reps"}
+          fieldValue={this.state.reps}
+          stateUpdate={(newValue) => this.setState({"reps": newValue})}
+          defaultValue={0}
+          lowerFieldValueBound={1}
+          upperFieldValueBound={10}
+          increment={1}
+        />
         
       </View>
 
